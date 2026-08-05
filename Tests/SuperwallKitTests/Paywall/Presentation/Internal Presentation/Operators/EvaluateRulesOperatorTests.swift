@@ -16,7 +16,7 @@ struct EvaluateRulesOperatorTests {
     let identifier = "abc"
 
     let request = dependencyContainer.makePresentationRequest(
-      .fromIdentifier(identifier, freeTrialOverride: false),
+      .fromIdentifier(identifier, freeTrialOverride: false, attributeOverrides: [:]),
       isDebuggerLaunched: true,
       isPaywallPresented: false,
       type: .getPaywall(.stub())

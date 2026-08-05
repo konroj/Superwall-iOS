@@ -46,7 +46,7 @@ struct DebugManagerTests {
   }
 
   @Test func outcomeForDeepLink_carriesOverrides() {
-    let url = URL(string: "myapp://?superwall_debug=true&token=abc&paywall_id=123&trial_state=ineligible&appearance=dark&locale=de&present=true")!
+    let url = URL(string: "myapp://?superwall_debug=true&token=abc&paywall_id=123&trial_state=ineligible&appearance=dark&locale=de&present=true&attr_plan=pro")!
 
     let outcome = DebugManager.outcomeForDeepLink(url: url)
 
@@ -56,5 +56,6 @@ struct DebugManagerTests {
     #expect(outcome?.overrides.appearance == .dark)
     #expect(outcome?.overrides.localeIdentifier == "de")
     #expect(outcome?.overrides.shouldPresent == true)
+    #expect(outcome?.overrides.attributes == ["plan": "pro"])
   }
 }

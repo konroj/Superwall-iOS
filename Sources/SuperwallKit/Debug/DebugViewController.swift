@@ -280,6 +280,9 @@ final class DebugViewController: UIViewController {
 
       let productVariables = await storeKitManager.getProductVariables(for: paywall)
       paywall.productVariables = productVariables
+      if !overrides.attributes.isEmpty {
+        paywall.debugAttributeOverrides = overrides.attributes
+      }
 
       // Debugger dismissed mid-load (previewTask cancelled): skip rendering/presenting.
       guard !Task.isCancelled else {
@@ -516,7 +519,8 @@ final class DebugViewController: UIViewController {
     let presentationRequest = factory.makePresentationRequest(
       .fromIdentifier(
         paywallIdentifier,
-        freeTrialOverride: introOfferAvailable
+        freeTrialOverride: introOfferAvailable,
+        attributeOverrides: overrides.attributes
       ),
       paywallOverrides: nil,
       presenter: self,

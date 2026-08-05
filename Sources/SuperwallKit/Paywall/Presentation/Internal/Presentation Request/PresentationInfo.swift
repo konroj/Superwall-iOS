@@ -13,12 +13,22 @@ enum PresentationInfo {
   case explicitTrigger(PlacementData)
 
   /// Only used in the `DebugViewController`
-  case fromIdentifier(_ identifier: String, freeTrialOverride: Bool)
+  case fromIdentifier(_ identifier: String, freeTrialOverride: Bool, attributeOverrides: [String: String])
 
   var freeTrialOverride: Bool? {
     switch self {
-    case .fromIdentifier(_, let freeTrialOverride):
+    case .fromIdentifier(_, let freeTrialOverride, _):
       return freeTrialOverride
+    default:
+      return nil
+    }
+  }
+
+  /// Debugger-only user-attribute overrides, applied to the presented paywall's render only.
+  var attributeOverrides: [String: String]? {
+    switch self {
+    case .fromIdentifier(_, _, let attributeOverrides):
+      return attributeOverrides
     default:
       return nil
     }
@@ -46,7 +56,7 @@ enum PresentationInfo {
 
   var identifier: String? {
     switch self {
-    case .fromIdentifier(let identifier, _):
+    case .fromIdentifier(let identifier, _, _):
       return identifier
     default:
       return nil

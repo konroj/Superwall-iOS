@@ -64,7 +64,11 @@ extension Superwall {
       let isForPresentation = !request.flags.type.isGettingPresentationResult
       let delegate = request.flags.type.getPaywallVcDelegateAdapter()
 
-      let paywall = try await dependencyContainer.paywallManager.getPaywall(from: paywallRequest)
+      var paywall = try await dependencyContainer.paywallManager.getPaywall(from: paywallRequest)
+      if let attributeOverrides = request.presentationInfo.attributeOverrides,
+        !attributeOverrides.isEmpty {
+        paywall.debugAttributeOverrides = attributeOverrides
+      }
 
       let paywallViewController = try await dependencyContainer.paywallManager.getViewController(
         for: paywall,
