@@ -141,8 +141,40 @@ struct DebugPaywallOverridesTests {
     #expect(overrides.shouldPresent == false)
   }
 
+  @Test func parse_attributes() {
+    let url = URL(string: "myapp://?attr_tier=gold&attr_plan=pro")!
+
+    let overrides = DebugPaywallOverrides(url: url)
+
+    #expect(overrides.attributes == ["tier": "gold", "plan": "pro"])
+  }
+
+  @Test func parse_attributes_none() {
+    let url = URL(string: "myapp://?locale=de")!
+
+    let overrides = DebugPaywallOverrides(url: url)
+
+    #expect(overrides.attributes.isEmpty)
+  }
+
+  @Test func parse_attributes_emptyKeyIsIgnored() {
+    let url = URL(string: "myapp://?attr_=value")!
+
+    let overrides = DebugPaywallOverrides(url: url)
+
+    #expect(overrides.attributes.isEmpty)
+  }
+
+  @Test func parse_attributes_makesNotEmpty() {
+    let url = URL(string: "myapp://?attr_plan=pro")!
+
+    let overrides = DebugPaywallOverrides(url: url)
+
+    #expect(overrides.isEmpty == false)
+  }
+
   @Test func parse_combined() {
-    let url = URL(string: "myapp://?superwall_debug=true&token=abc&paywall_id=123&trial_state=ineligible&appearance=dark&locale=de&present=true")!
+    let url = URL(string: "myapp://?superwall_debug=true&token=abc&paywall_id=123&trial_state=ineligible&appearance=dark&locale=de&present=true&attr_plan=pro")!
 
     let overrides = DebugPaywallOverrides(url: url)
 
@@ -150,6 +182,7 @@ struct DebugPaywallOverridesTests {
     #expect(overrides.appearance == .dark)
     #expect(overrides.localeIdentifier == "de")
     #expect(overrides.shouldPresent == true)
+    #expect(overrides.attributes == ["plan": "pro"])
     #expect(overrides.isEmpty == false)
   }
 }

@@ -34,7 +34,8 @@ enum TemplateLogic {
     let variablesTemplate = await factory.makeJsonVariables(
       products: productVariables,
       computedPropertyRequests: paywall.computedPropertyRequests,
-      placement: placement
+      placement: placement,
+      attributeOverrides: paywall.debugAttributeOverrides
     )
 
     let experimentTemplate = ExperimentTemplate(

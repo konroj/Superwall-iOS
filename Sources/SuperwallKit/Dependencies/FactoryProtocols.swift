@@ -38,7 +38,8 @@ protocol VariablesFactory: AnyObject {
   func makeJsonVariables(
     products: [ProductVariable]?,
     computedPropertyRequests: [ComputedPropertyRequest],
-    placement: PlacementData?
+    placement: PlacementData?,
+    attributeOverrides: [String: String]?
   ) async -> JSON
 }
 

@@ -129,6 +129,11 @@ struct Paywall: Codable {
   /// Each contains a product type and their attributes.
   var productVariables: [ProductVariable]? = []
 
+  /// Debugger-only user-attribute overrides, merged into the paywall's template variables
+  /// at render time. Never persisted, encoded, or written to identity state — set only by the
+  /// debug preview flow so a deep link can preview a paywall with specific `user.*` values.
+  var debugAttributeOverrides: [String: String]?
+
   /// The paywall.js version being used. Added when the website fires `onReady`.
   var paywalljsVersion: String?
 
