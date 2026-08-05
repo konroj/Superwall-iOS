@@ -357,17 +357,25 @@ extension DependencyContainer: VariablesFactory {
   func makeJsonVariables(
     products: [ProductVariable]?,
     computedPropertyRequests: [ComputedPropertyRequest],
-    placement: PlacementData?
+    placement: PlacementData?,
+    attributeOverrides: [String: String]?
   ) async -> JSON {
     let templateDeviceDict = await deviceHelper.getDeviceAttributes(
       since: placement,
       computedPropertyRequests: computedPropertyRequests
     )
 
+    var userAttributes = identityManager.userAttributes
+    if let attributeOverrides = attributeOverrides {
+      for (key, value) in attributeOverrides {
+        userAttributes[key] = value
+      }
+    }
+
     return Variables(
       products: products,
       params: placement?.parameters,
-      userAttributes: identityManager.userAttributes,
+      userAttributes: userAttributes,
       templateDeviceDictionary: templateDeviceDict
     ).templated()
   }

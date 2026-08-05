@@ -26,8 +26,15 @@ final class TemplateLogicTests: XCTestCase {
     func makeJsonVariables(
       products productVariables: [ProductVariable]?,
       computedPropertyRequests: [ComputedPropertyRequest],
-      placement: PlacementData?
+      placement: PlacementData?,
+      attributeOverrides: [String: String]?
     ) async -> JSON {
+      var userAttributes = self.userAttributes
+      if let attributeOverrides = attributeOverrides {
+        for (key, value) in attributeOverrides {
+          userAttributes[key] = value
+        }
+      }
       return Variables(
         products: productVariables,
         params: placement?.parameters,
@@ -333,5 +340,40 @@ final class TemplateLogicTests: XCTestCase {
 
     XCTAssertEqual(jsonArray[2]["event_name"], "template_substitutions_prefix")
     XCTAssertEqual(jsonArray[2]["prefix"], "freeTrial")
+  }
+
+  func test_getBase64EncodedTemplates_debugAttributeOverrides_mergeIntoUserVariables() async {
+    // MARK: Given
+    let dependencyContainer = DependencyContainer()
+    let userAttributes: [String: Any] = [
+      "name": "Yusuf",
+      "plan": "free"
+    ]
+    let factory = MockVariablesFactory(
+      userAttributes: userAttributes,
+      deviceDict: [:]
+    )
+
+    // MARK: When
+    let encodedTemplates = await TemplateLogic.getBase64EncodedTemplates(
+      from: .stub()
+        .setting(\.debugAttributeOverrides, to: ["plan": "pro", "tier": "gold"]),
+      placement: .stub(),
+      receiptManager: dependencyContainer.receiptManager,
+      factory: factory
+    )
+
+    // decode
+    let encodedData = Data(base64Encoded: encodedTemplates)!
+    let json = try! JSON(data: encodedData)
+    let user = json.array![1]["variables"]["user"]
+
+    // MARK: Then
+    // Override replaces an existing attribute...
+    XCTAssertEqual(user["plan"], "pro")
+    // ...adds a new one...
+    XCTAssertEqual(user["tier"], "gold")
+    // ...and leaves untouched attributes alone.
+    XCTAssertEqual(user["name"], "Yusuf")
   }
 }

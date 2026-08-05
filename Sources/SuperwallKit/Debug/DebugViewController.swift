@@ -280,6 +280,9 @@ final class DebugViewController: UIViewController {
 
       let productVariables = await storeKitManager.getProductVariables(for: paywall)
       paywall.productVariables = productVariables
+      if !overrides.attributes.isEmpty {
+        paywall.debugAttributeOverrides = overrides.attributes
+      }
 
       self.paywall = paywall
       self.previewPickerButton.setTitle("\(paywall.name)", for: .normal)
